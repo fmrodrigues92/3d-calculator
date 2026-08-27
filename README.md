@@ -11,6 +11,23 @@ Aplicação Node.js simples para calcular custo de produção e preço de venda 
 - Comparação simultânea de todos os filamentos.
 - Custo total, custo por unidade, preço total e preço por unidade.
 - Configurações persistidas no `localStorage` do navegador.
+- Vercel Web Analytics para visitantes, visualizações de página e eventos de uso.
+- Vercel Speed Insights para métricas reais de performance e Core Web Vitals.
+
+## Analytics da Vercel
+
+O frontend carrega os scripts first-party do Web Analytics e do Speed Insights. Os eventos personalizados registram apenas ações e contagens gerais; valores informados na calculadora e nomes cadastrados não são enviados.
+
+Depois do deploy, habilite **Analytics** e **Speed Insights** no painel do projeto na Vercel. A coleta acontece apenas quando a aplicação está hospedada na Vercel; em `localhost`, as rotas `/_vercel/*` não existem.
+
+Eventos personalizados configurados:
+
+- `calculation_updated`
+- `settings_opened`
+- `settings_item_added`
+- `settings_item_removed`
+- `settings_reset`
+- `settings_saved`
 
 ## Executar
 

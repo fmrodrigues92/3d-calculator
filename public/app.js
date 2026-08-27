@@ -20,6 +20,8 @@ const state = {
   draftSettings: null
 };
 
+let calculationEventTimer;
+
 const $ = (selector) => document.querySelector(selector);
 const els = {
   weight: $('#weight'),
@@ -43,6 +45,22 @@ const els = {
 
 function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function trackEvent(name, properties) {
+  if (typeof window.va === 'function') {
+    window.va('event', name, properties);
+  }
+}
+
+function scheduleCalculationEvent() {
+  clearTimeout(calculationEventTimer);
+  calculationEventTimer = setTimeout(() => {
+    trackEvent('calculation_updated', {
+      filamentCount: state.settings.filaments.length,
+      paymentMethodConfigured: Boolean(els.paymentMethod.value)
+    });
+  }, 800);
 }
 
 function loadSettings() {
@@ -141,6 +159,7 @@ function openSettings() {
   state.draftSettings = deepClone(state.settings);
   renderSettingsLists();
   els.settingsDialog.showModal();
+  trackEvent('settings_opened');
 }
 
 function renderSettingsLists() {
@@ -161,6 +180,7 @@ function renderFilaments() {
       syncDraftFromUI();
       state.draftSettings.filaments = state.draftSettings.filaments.filter((item) => item.id !== filament.id);
       renderFilaments();
+      trackEvent('settings_item_removed', { itemType: 'filament' });
     });
     els.filamentList.appendChild(fragment);
   });
@@ -178,6 +198,7 @@ function renderPayments() {
       syncDraftFromUI();
       state.draftSettings.paymentMethods = state.draftSettings.paymentMethods.filter((item) => item.id !== method.id);
       renderPayments();
+      trackEvent('settings_item_removed', { itemType: 'payment_method' });
     });
     els.paymentList.appendChild(fragment);
   });
@@ -211,6 +232,7 @@ $('#addFilament').addEventListener('click', () => {
     machineCostPerHour: 0
   });
   renderFilaments();
+  trackEvent('settings_item_added', { itemType: 'filament' });
 });
 
 $('#addPayment').addEventListener('click', () => {
@@ -221,11 +243,13 @@ $('#addPayment').addEventListener('click', () => {
     percentageFee: 0
   });
   renderPayments();
+  trackEvent('settings_item_added', { itemType: 'payment_method' });
 });
 
 $('#resetSettings').addEventListener('click', () => {
   state.draftSettings = deepClone(DEFAULT_SETTINGS);
   renderSettingsLists();
+  trackEvent('settings_reset');
 });
 
 els.settingsForm.addEventListener('submit', (event) => {
@@ -249,6 +273,10 @@ els.settingsForm.addEventListener('submit', (event) => {
     renderPaymentSelect();
     calculate();
     els.settingsDialog.close();
+    trackEvent('settings_saved', {
+      filamentCount: validFilaments.length,
+      paymentMethodCount: validPayments.length
+    });
   }
 });
 
@@ -262,8 +290,14 @@ els.settingsForm.addEventListener('submit', (event) => {
   els.margin,
   els.paymentMethod
 ].forEach((element) => {
-  element.addEventListener('input', calculate);
-  element.addEventListener('change', calculate);
+  element.addEventListener('input', () => {
+    calculate();
+    scheduleCalculationEvent();
+  });
+  element.addEventListener('change', () => {
+    calculate();
+    scheduleCalculationEvent();
+  });
 });
 
 renderPaymentSelect();
