@@ -2,10 +2,10 @@ const STORAGE_KEY = '3d-cost-calculator-settings-v1';
 
 const DEFAULT_SETTINGS = {
   filaments: [
-    { id: crypto.randomUUID(), name: 'PLA', pricePerKg: 80, machineCostPerHour: 1.5 },
-    { id: crypto.randomUUID(), name: 'PETG', pricePerKg: 95, machineCostPerHour: 1.7 },
-    { id: crypto.randomUUID(), name: 'ABS', pricePerKg: 90, machineCostPerHour: 1.8 },
-    { id: crypto.randomUUID(), name: 'ASA', pricePerKg: 120, machineCostPerHour: 2 }
+    { id: crypto.randomUUID(), name: 'PLA', pricePerKg: 115, machineCostPerHour: 0.24 },
+    { id: crypto.randomUUID(), name: 'PETG', pricePerKg: 85, machineCostPerHour: 0.24 },
+    { id: crypto.randomUUID(), name: 'ABS', pricePerKg: 99.9, machineCostPerHour: 0.24 },
+    { id: crypto.randomUUID(), name: 'ASA', pricePerKg: 180, machineCostPerHour: 0.24 }
   ],
   paymentMethods: [
     { id: crypto.randomUUID(), name: 'Pix direto', percentageFee: 0 },
