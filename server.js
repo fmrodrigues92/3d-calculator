@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next"
+
 const express = require('express');
 const path = require('path');
 
